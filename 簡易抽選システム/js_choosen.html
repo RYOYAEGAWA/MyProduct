@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8".>
+    <title> 簡易システム </title>
+    <script>
+      /**
+       * メンバーを抽選する
+       */
+      function chooseMember() {
+        /*constとは、変数の中身を変えたくないときに使用する。varは、あまり使わない*/
+        const form = document.form1;　//form内の内容全てを取得
+        const names = form.names.value;　　
+        const list = names.split(',');
+
+        const count = form.num.value;
+        let winners = [];
+
+        // 指定された当選者数分だけ for で回す
+        for (let i = 0; i < count; i++) {
+          /**
+           * 乱数の取得に関して、このサイトがわかりやすいです。
+           * https://www.sejuku.net/blog/22432
+           */
+          const chosen_index = Math.floor(Math.random() * list.length);
+          // 当選者を当選者用配列に詰める
+          winners.push(list[chosen_index]);
+
+          // 応募者リストから、当選したメンバーを除外する
+          list.splice(chosen_index, 1);
+        }
+        output(winners);
+      }
+
+      /**
+       * HTML タグを生成して出力する
+       * @param {string[]} winners 当選者の配列
+       */
+      function output(winners) {
+        let elem = document.getElementById('js-list');
+        elem.innerText = ''; //elemの中身を消している。
+
+        let ul = document.createElement('ul');  //ulタグを作成
+        for (let i = 0; i < winners.length; i++) {
+          let li = document.createElement('li');  //liタグを作成
+          li.innerText = winners[i];
+          ul.appendChild(li);
+        }
+
+        elem.appendChild(ul);
+      }
+
+    </script>
+</head>
+    
+<body>
+    
+<h1>簡易抽選システム</h1>
+    
+<!--
+・return falseとは、ボタンを押したら入力した内容が消えてしまうため、キャンセルされる。
+・onsubmit=chooseMemberは、jsを機能されるために必要。
+-->
+<form name="form1" onsubmit="chooseMember();return false;">
+    <fieldset>
+        <legend>応募者N人中、M人を選ぶ</legend>
+        <p><label>応募者一覧(カンマ区切りで入力) <input type="text" name="names"></label></p>
+        <p><label>当選者数<input type="number" name="num"></label></p>
+        
+    </fieldset>
+    <button type="submit" id="submit">当選する</button>
+</form>
+    
+<div>
+    <h2>当選者一覧</h2>
+    <div id="js-list"></div>
+</div>
+
+</body>
+</html>
